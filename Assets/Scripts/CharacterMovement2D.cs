@@ -8,70 +8,64 @@ public class CharacterMovement2D : MonoBehaviour
     [SerializeField] private Collider2D _collider;
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _jumpForce;
+    [SerializeField] [Range(0f, 1f)] private float _groundNormal;
 
     private Rigidbody2D _body;
-    private List<Collider2D> _groundColliders;
 
-    public bool OnGround => _groundColliders.Count > 0;
+    public bool OnGround { get; private set; }
 
-    public Vector2 Velocity => _body.velocity;
     private void Awake()
     {
         _body = GetComponent<Rigidbody2D>();
     }
 
-    private void Start()
-    {
-        _groundColliders = new List<Collider2D>();
-    }
-
     public void Jump()
     {
+        _body.velocity = new Vector2(_body.velocity.x, 0);
         _body.AddForce(Vector2.up * _jumpForce);
     }
 
     public void Move(Vector2 moveDirection)
     {
-        if (moveDirection.x == 0)
-        {
-            _body.velocity = new Vector2(0, _body.velocity.y);
-            return;
-        }
-
         moveDirection *= _moveSpeed;
-        float yVelocityKf = 1f;
+
+        float minGroundNormalY = 1f;
         RaycastHit2D[] hits = new RaycastHit2D[16];
         int hitCount = _collider.Cast(moveDirection.normalized, hits, 0.1f);
         for (int i = 0; i < hitCount; i++)
         {
-            if (hits[i].normal.y < yVelocityKf)
-                yVelocityKf = hits[i].normal.y;
-            if (hits[i].normal.y < 0.65f)
+            if (hits[i].normal.y < minGroundNormalY)
+                minGroundNormalY = hits[i].normal.y;
+            if (hits[i].normal.y < _groundNormal && hits[i].normal.y > -_groundNormal)
             {
                 _body.velocity = new Vector2(0, _body.velocity.y);
                 return;
             }
         }
-        _body.velocity = new Vector2(_moveSpeed * Mathf.Sign(moveDirection.x), _body.velocity.y * yVelocityKf);
-    }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (_groundColliders.Contains(collision.collider))
-            _groundColliders.Remove(collision.collider);
+
+        float direction = moveDirection.x == 0 ? 0 : Mathf.Sign(moveDirection.x);
+        _body.velocity = new Vector2(_moveSpeed * direction, _body.velocity.y * minGroundNormalY);
     }
 
-    void OnCollisionStay2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (_groundColliders.Contains(collision.collider) == false)
+        foreach (var contact in collision.contacts)
         {
-            foreach (var contact in collision.contacts)
+            if (contact.normal.y >= _groundNormal)
             {
-                if (contact.point.y < _collider.bounds.min.y)
-                {
-                    _groundColliders.Add(collision.collider);
-                    break;
-                }
+                OnGround = true;
+                break;
             }
         }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        OnCollisionEnter2D(collision);
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        OnGround = false;
     }
 }
