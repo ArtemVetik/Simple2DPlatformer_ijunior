@@ -13,6 +13,7 @@ public class CharacterMovement2D : MonoBehaviour
     private Rigidbody2D _body;
 
     public bool OnGround { get; private set; }
+    public Vector2 Velocity => _body.velocity;
 
     private void Awake()
     {
