@@ -41,7 +41,7 @@ public class CharacterMovement2D : MonoBehaviour
         {
             if (hits[i].normal.y < minGroundNormalY)
                 minGroundNormalY = hits[i].normal.y;
-            if (hits[i].normal.y < _groundNormal && hits[i].normal.y > -_groundNormal)
+            if (hits[i].normal.y < _groundNormal /*&& hits[i].normal.y > -_groundNormal*/)
             {
                 _body.velocity = new Vector2(0, _body.velocity.y);
                 return;

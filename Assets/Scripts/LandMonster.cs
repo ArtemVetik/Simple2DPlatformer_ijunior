@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class LandEnemy : Enemy
+public class LandMonster : Enemy
 {
     [SerializeField] private Animator _animator;
     [SerializeField] private float _closeDistance;
