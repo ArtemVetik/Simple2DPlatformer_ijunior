@@ -5,15 +5,13 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class LandEnemy : Enemy
 {
-    [SerializeField] private SpriteRenderer _sprite;
-    [SerializeField] private Collider2D _collider;
     [SerializeField] private Animator _animator;
-    [SerializeField] private float _stopDistance;
+    [SerializeField] private float _closeDistance;
     [SerializeField] [Range(0f, 1f)] private float _groundNormal;
 
     private Rigidbody2D _body;
+    private LayerMask _playerLayer;
     private float? _lastHitFraction;
-    private LayerMask _layer;
 
     private void Awake()
     {
@@ -23,42 +21,33 @@ public class LandEnemy : Enemy
     {
         _body.freezeRotation = true;
         _lastHitFraction = null;
-        _layer = LayerMask.NameToLayer("Player") << 8;
+        _playerLayer = LayerMask.NameToLayer("Player") << 8;
 
-        Flip(_direction = 1);
-        _animator.SetBool("run", true);
-
-        die += () => Destroy(gameObject); 
+        Direction = MoveDirection.Right;
+        _animator.SetBool("run", _speed != 0);
     }
 
     private void Update()
     {
-        _body.velocity = new Vector2(_speed * _direction, _body.velocity.y);
+        _body.velocity = new Vector2(_speed * (int)Direction, _body.velocity.y);
 
-        if (CanMove(_collider, _direction, _stopDistance) == false)
+        if (CanMove(_collider, Direction, _closeDistance) == false)
         {
             _lastHitFraction = null;
-            _direction *= -1;
-            Flip(_direction);
+            Direction = Direction.Flip();
         }
     }
 
-    private bool CanMove(Collider2D collider, int direction, float stopDistance)
+    private bool CanMove(Collider2D collider, MoveDirection direction, float stopDistance)
     {
         float xPos = direction > 0 ? collider.bounds.max.x + 0.01f : collider.bounds.min.x - 0.01f;
-        Vector2 origin = new Vector2(xPos + stopDistance * direction, collider.bounds.center.y);
-        RaycastHit2D hitDown = Physics2D.Raycast(origin, Vector2.down, Mathf.Infinity, _layer);
-        RaycastHit2D hitDirection = Physics2D.Raycast(new Vector2(xPos, collider.bounds.center.y), Vector2.right * direction, stopDistance, _layer);
+        Vector2 origin = new Vector2(xPos + stopDistance * (int)direction, collider.bounds.center.y);
+        RaycastHit2D hitDown = Physics2D.Raycast(origin, Vector2.down, Mathf.Infinity, _playerLayer);
 
         if (_lastHitFraction == null)
             _lastHitFraction = hitDown.fraction;
 
-        return hitDown.normal.y >= _groundNormal && /*hitDirection.collider == null &&*/ Mathf.Abs(hitDown.fraction - _lastHitFraction.Value) < 1f;
-    }
-
-    private void Flip(int direction)
-    {
-        _sprite.flipX = direction > 0;
+        return hitDown.normal.y >= _groundNormal && Mathf.Abs(hitDown.fraction - _lastHitFraction.Value) < 1f;
     }
 
     protected override void OnCollisionEnter2D(Collision2D collision)
@@ -67,8 +56,7 @@ public class LandEnemy : Enemy
         {
             if (contact.normal.y < _groundNormal)
             {
-                _direction *= -1;
-                Flip(_direction);
+                Direction = Direction.Flip();
                 break;
             }
         }
