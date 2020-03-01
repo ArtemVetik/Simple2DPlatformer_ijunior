@@ -11,15 +11,19 @@ public class CharacterMovement2D : MonoBehaviour
     [SerializeField] [Range(0f, 1f)] private float _groundNormal;
 
     private Rigidbody2D _body;
-
     public bool OnGround { get; private set; }
     public Vector2 Velocity => _body.velocity;
 
     private void Awake()
     {
         _body = GetComponent<Rigidbody2D>();
+        _body.freezeRotation = true;
     }
 
+    public void AddForce(Vector2 force)
+    {
+        _body.AddForce(force);
+    }
     public void Jump()
     {
         _body.velocity = new Vector2(_body.velocity.x, 0);

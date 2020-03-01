@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     [SerializeField] private CharacterMovement2D _movement;
     [SerializeField] private SpriteRenderer _sprite;
     [SerializeField] private Animator _animator;
+    [SerializeField] private float _health;
 
     private void Update()
     {
@@ -21,6 +22,14 @@ public class Player : MonoBehaviour
         FlipSprite(moveDir);
     }
 
+    public void TakeDamage(int damage)
+    {
+        _health -= damage;
+        if (_health <= 0)
+        {
+            _health = 0;
+        }
+    }
     private void UpdateAnimations()
     {
         _animator.SetBool("run", _movement.Velocity.x != 0);
@@ -34,7 +43,14 @@ public class Player : MonoBehaviour
     private void FlipSprite(Vector2 moveDirection)
     {
         _sprite.flipX = moveDirection.x < 0 ? true : moveDirection.x > 0 ? false : _sprite.flipX;
+    }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.TryGetComponent(out Enemy enemy))
+        {
+            _movement.AddForce(Vector2.up * 250f);
+        }
     }
 }
 
