@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class HealthDisplay : MonoBehaviour
 {
     [SerializeField] private Text _health;
+    [SerializeField] private Animation _animation;
     [SerializeField] private Player _player;
 
     private void OnEnable()
@@ -21,5 +22,6 @@ public class HealthDisplay : MonoBehaviour
     private void UpdateHealth(int health)
     {
         _health.text = health.ToString();
+        _animation.Play();
     }
 }
