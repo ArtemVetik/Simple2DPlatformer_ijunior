@@ -2,12 +2,20 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : Unit
 {
+    public event Action<int> OnHealtChanged;
+
+    [SerializeField] private UnityEvent _onDied;
     [SerializeField] private CharacterMovement2D _movement;
     [SerializeField] private Animator _animator;
 
+    private void Start()
+    {
+        OnHealtChanged?.Invoke(_health);
+    }
     private void Update()
     {
         Direction = (MoveDirection)(int)Input.GetAxisRaw("Horizontal");
@@ -37,9 +45,22 @@ public class Player : Unit
         }
     }
 
+    public override void TakeDamage(int damage)
+    {
+        base.TakeDamage(damage);
+        OnHealtChanged?.Invoke(_health);
+    }
+
     protected override void Dead()
     {
-        Debug.Log("dead");
+        _onDied?.Invoke();
+        Destroy(gameObject);
+    }
+
+    private void OnDisable()
+    {
+        _movement.Move(Vector2.zero);
+        UpdateAnimations();
     }
 }
 

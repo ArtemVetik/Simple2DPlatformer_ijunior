@@ -132,6 +132,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bac4450c7c039c9479a346031438240f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collected:
-    m_PersistentCalls:
-      m_Calls: []
+  _cost: 3
+  _particles: {fileID: 2614486458603614666, guid: 84e7e1b39709a9645b45d503c46a1891,
+    type: 3}
