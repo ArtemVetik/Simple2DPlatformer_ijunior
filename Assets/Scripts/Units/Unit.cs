@@ -6,12 +6,16 @@ public enum MoveDirection : int
 {
     Right = 1, Left = -1, None = 0,
 }
-public class Unit : MonoBehaviour
+
+[RequireComponent(typeof(SpriteRenderer))]
+abstract public class Unit : MonoBehaviour
 {
-    [SerializeField] protected SpriteRenderer _sprite;
     [SerializeField] protected int _health;
 
+    protected SpriteRenderer _sprite;
+
     private MoveDirection _direction;
+
     protected MoveDirection Direction
     {
         get
@@ -21,8 +25,7 @@ public class Unit : MonoBehaviour
         set
         {
             _direction = value;
-            if (_direction != MoveDirection.None)
-                _sprite.flipX = (int)_direction < 0;
+            FlipSprite();
         }
     }
 
@@ -39,6 +42,12 @@ public class Unit : MonoBehaviour
     protected virtual void Dead()
     {
         Destroy(gameObject);
+    }
+
+    protected void FlipSprite()
+    {
+        if (_direction != MoveDirection.None)
+            _sprite.flipX = _direction < 0;
     }
 
     protected virtual void OnCollisionEnter2D(Collision2D collision) { }

@@ -4,18 +4,28 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(Animator))]
 public class Player : Unit
 {
+    [SerializeField] private UnityEvent _onDied;
+    
+    private Animator _animator;
+    private CharacterMovement2D _movement;
+
     public event Action<int> OnHealtChanged;
 
-    [SerializeField] private UnityEvent _onDied;
-    [SerializeField] private CharacterMovement2D _movement;
-    [SerializeField] private Animator _animator;
+    private void Awake()
+    {
+        _animator = GetComponent<Animator>();
+        _sprite = GetComponent<SpriteRenderer>();
+        _movement = GetComponent<CharacterMovement2D>();
+    }
 
     private void Start()
     {
         OnHealtChanged?.Invoke(_health);
     }
+
     private void Update()
     {
         Direction = (MoveDirection)(int)Input.GetAxisRaw("Horizontal");

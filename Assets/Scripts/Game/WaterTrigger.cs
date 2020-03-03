@@ -6,14 +6,15 @@ public class WaterTrigger : MonoBehaviour
 {
     [SerializeField] private float _hitDelay = 1f;
 
+    private Dictionary<Unit, bool> _unitsInWater;
     private WaitForSeconds _pause;
 
-    Dictionary<Unit, bool> _unitsInWater;
     private void Start()
     {
         _unitsInWater = new Dictionary<Unit, bool>();
         _pause = new WaitForSeconds(_hitDelay);
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.TryGetComponent(out Unit unit))

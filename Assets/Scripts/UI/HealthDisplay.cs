@@ -19,6 +19,7 @@ public class HealthDisplay : MonoBehaviour
     {
         _player.OnHealtChanged -= UpdateHealth;
     }
+
     private void UpdateHealth(int health)
     {
         _health.text = health.ToString();

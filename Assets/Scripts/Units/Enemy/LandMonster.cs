@@ -2,21 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Animator))]
 public class LandMonster : Enemy
 {
-    [SerializeField] private Animator _animator;
     [SerializeField] private float _closeDistance;
     [SerializeField] [Range(0f, 1f)] private float _groundNormal;
 
-    private Rigidbody2D _body;
+    private Animator _animator;
     private LayerMask _playerLayer;
     private float? _lastHitFraction;
 
     private void Awake()
     {
+        _animator = GetComponent<Animator>();
+        _collider = GetComponent<Collider2D>();
         _body = GetComponent<Rigidbody2D>();
+        _sprite = GetComponent<SpriteRenderer>();
     }
+
     private void Start()
     {
         _body.freezeRotation = true;

@@ -17,6 +17,7 @@ public class CoinsDisplay : MonoBehaviour
     {
         _collector.OnCoinCollected -= UpdateCoins;
     }
+
     private void UpdateCoins(int value)
     {
         _coins.text = value.ToString();

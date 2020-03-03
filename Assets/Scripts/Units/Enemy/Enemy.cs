@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(Collider2D), typeof(Rigidbody2D))]
 public class Enemy : Unit
 {
-    [SerializeField] protected Collider2D _collider;
     [SerializeField] protected float _speed;
+
+    protected Collider2D _collider;
+    protected Rigidbody2D _body;
 
     protected override void OnCollisionEnter2D(Collision2D collision)
     {

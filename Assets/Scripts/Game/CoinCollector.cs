@@ -6,6 +6,7 @@ using UnityEngine;
 public class CoinCollector : MonoBehaviour
 {
     public event Action<int> OnCoinCollected;
+
     public int Coins { get; private set; }
 
     private void Start()
@@ -13,6 +14,7 @@ public class CoinCollector : MonoBehaviour
         Coins = 0;
         OnCoinCollected?.Invoke(Coins);
     }
+
     public void AddCoins(int value)
     {
         Coins += value;

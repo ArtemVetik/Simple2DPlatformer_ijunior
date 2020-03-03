@@ -5,8 +5,9 @@ using UnityEngine.Events;
 
 public class Coin : MonoBehaviour
 {
-    [SerializeField] private int _cost;
     [SerializeField] private ParticleSystem _particles;
+    [SerializeField] private int _cost;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.TryGetComponent(out CoinCollector collector))

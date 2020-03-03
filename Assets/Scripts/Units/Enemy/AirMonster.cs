@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Animator))]
 public class AirMonster : Enemy
 {
-    [SerializeField] private Animator _animator;
     [SerializeField] private float _flyDistance;
 
-    private Rigidbody2D _body;
+    private Animator _animator;
     private Vector2 _startPosition;
 
     private void Awake()
     {
+        _animator = GetComponent<Animator>();
+        _collider = GetComponent<Collider2D>();
         _body = GetComponent<Rigidbody2D>();
+        _sprite = GetComponent<SpriteRenderer>();
     }
 
     private void Start()
@@ -21,6 +23,7 @@ public class AirMonster : Enemy
         _startPosition = transform.position;
         Direction = MoveDirection.Right;
     }
+
     private void Update()
     {
         _body.velocity = new Vector2(_speed * (int)Direction, 0);

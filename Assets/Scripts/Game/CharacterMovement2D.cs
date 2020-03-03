@@ -2,20 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Collider2D), typeof(Rigidbody2D))]
 public class CharacterMovement2D : MonoBehaviour
 {
-    [SerializeField] private Collider2D _collider;
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _jumpForce;
     [SerializeField] [Range(0f, 1f)] private float _groundNormal;
 
+    private Collider2D _collider;
     private Rigidbody2D _body;
-    public bool OnGround { get; private set; }
+
     public Vector2 Velocity => _body.velocity;
+    public bool OnGround { get; private set; }
 
     private void Awake()
     {
+        _collider = GetComponent<Collider2D>();
         _body = GetComponent<Rigidbody2D>();
         _body.freezeRotation = true;
     }
@@ -41,7 +43,7 @@ public class CharacterMovement2D : MonoBehaviour
         {
             if (hits[i].normal.y < minGroundNormalY)
                 minGroundNormalY = hits[i].normal.y;
-            if (hits[i].normal.y < _groundNormal /*&& hits[i].normal.y > -_groundNormal*/)
+            if (hits[i].normal.y < _groundNormal)
             {
                 _body.velocity = new Vector2(0, _body.velocity.y);
                 return;
